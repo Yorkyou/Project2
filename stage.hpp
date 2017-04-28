@@ -31,7 +31,6 @@ public:
     string WB(Reg *r,int cycle);//Write 0 detection
     //stage update
     void stageUpdate(bool stall);
-    void BecomesNOP(int s);
     bool IsNOP(int op,int rd,int rt,int shamt,int funct){
         if (op==0x00 && rd==0 && rt==0 && shamt==0 && funct==0x00) {
             return true;

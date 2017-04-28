@@ -7,6 +7,23 @@
 //
 #include <iostream>
 #include "register.hpp"
+string BinaryToHex(bitset<32>a){
+    string r="";
+    bitset<4>data;
+    for (int i = 0; i < 8; i++) {//3 2 1 0?
+        data[0] = a[i*4];
+        data[1] = a[i*4+1];
+        data[2] = a[i*4+2];
+        data[3] = a[i*4+3];
+        if (data.to_ulong() > 9) {
+            char temp = char(data.to_ulong()-10+'A');
+            r.push_back(temp);
+        }
+        else r+= to_string(data.to_ulong());
+    }
+    reverse(r.begin(), r.end());
+    return "0x"+r;
+}
 bitset<64> operator+(bitset<64>r,bitset<64>temp){
     bool carry = false;
     bitset<64> result;
@@ -37,6 +54,7 @@ Reg::Reg(bitset<32> SP,bitset<32> PC){
     d_MemAddressOverflow = false;
     d_MemMissalign = false;
     numberOverflow = false;
+    pre_PC = this->reg[34];
 }
 long long Reg::BitsetToSigned32(bitset<32>data){
     bitset<31>temp;
@@ -305,6 +323,7 @@ void Reg::EX_addi(bitset<32>* ex_dm_rt, bitset<32> rs, long i,int rt,int cycle){
     if (rt==0) {
 //        this->Error+="In cycle "+to_string(cycle)+": Write $0 Error\n";
     }
+
     int i_is_pos=zero,rs_is_pos=zero,rt_is_pos=zero;
     if(i > 0)i_is_pos = pos;
     else if(i < 0)i_is_pos = neg;
@@ -312,6 +331,7 @@ void Reg::EX_addi(bitset<32>* ex_dm_rt, bitset<32> rs, long i,int rt,int cycle){
     else if(this->BitsetToSigned32(rs)<0)rs_is_pos = neg;
     
     bitset<32>im(i);//signed extension
+
     if (rt!=0) {
         *ex_dm_rt = rs+im;
         if(this->BitsetToSigned32(*ex_dm_rt)>0)rt_is_pos=pos;
@@ -350,6 +370,7 @@ void Reg::EX_CalculateMemIndex(bitset<32>* accessAdr, long i, bitset<32> rs,int 
     //$t = 4 bytes from Memory[$s + C(signed)]
     //check C is a multiple of 4
     //check if $s+C is not available --> don't know reg[rs] is viewed as signed or not
+
     int i_is_pos=zero,rs_is_pos=zero,index_is_pos=zero;
     bitset<32>im(i);//signed extension.
     if(BitsetToSigned32(rs)>0)rs_is_pos = pos;
@@ -424,7 +445,7 @@ void Reg::EX_slti(bitset<32>* ex_dm_rt, bitset<32> rs,long i,int rt,int cycle){
 bool Reg::ID_beq(bitset<32> rs, bitset<32> rt, long i,int cycle){
     //    if ($s == $t) go to PC+4+4*C(signed)
     if (rs==rt) {
-        this->reg[34] = this->reg[34]+bitset<32>(4)+(bitset<32>(i)<<2);//may cause problems
+        this->reg[34] = pre_PC+bitset<32>(4)+(bitset<32>(i)<<2);//may cause problems
         PCisadjusted = true;
         return true;
     }
@@ -433,7 +454,7 @@ bool Reg::ID_beq(bitset<32> rs, bitset<32> rt, long i,int cycle){
 bool Reg::ID_bne(bitset<32> rs, bitset<32> rt, long i,int cycle){
     //    if ($s != $t) go to PC+4+4*C(signed)
     if (rs!=rt) {
-        this->reg[34] = this->reg[34]+bitset<32>(4)+(bitset<32>(i)<<2);//may cause problems
+        this->reg[34] = pre_PC+bitset<32>(4)+(bitset<32>(i)<<2);
         PCisadjusted = true;
         return true;
     }
@@ -442,7 +463,7 @@ bool Reg::ID_bne(bitset<32> rs, bitset<32> rt, long i,int cycle){
 bool Reg::ID_bgtz(bitset<32> rs, long i,int cycle){
     //if $s > 0 go to PC+4+4*C(signed)
     if (BitsetToSigned32(rs)> 0) {
-        this->reg[34] = this->reg[34]+bitset<32>(4)+(bitset<32>(i)<<2);//may cause problems
+        this->reg[34] = pre_PC+bitset<32>(4)+(bitset<32>(i)<<2);//may cause problems
         PCisadjusted = true;
         return true;
     }
@@ -456,18 +477,18 @@ void Reg::ID_j(bitset<26> adr,int cycle){
     bitset<32> C4(0);
     bitset<32> temp(0);
     for(int i = 0 ; i < 26;i++)C4[i+2] = adr[i];
-    for(int i = 0 ; i < 4 ;i++)temp[28+i]=(this->reg[34]+bitset<32>(4))[28+i];
+    for(int i = 0 ; i < 4 ;i++)temp[28+i]=(pre_PC+bitset<32>(4))[28+i];
     this->reg[34] = temp | C4;
     PCisadjusted = true;
 }
 void Reg::ID_jal(bitset<26> adr,bitset<32>* id_ex_31,int cycle){
     //$31 = PC + 4
     //    PC = (PC+4)[31:28] | 4*C(unsigned)
-    *id_ex_31 = this->reg[34]+bitset<32>(4);
+    *id_ex_31 = pre_PC+bitset<32>(4);
     bitset<32> C4(0);
     bitset<32> temp(0);
     for(int i = 0 ; i < 26;i++)C4[i+2] = adr[i];
-    for(int i = 0 ; i < 4 ;i++)temp[28+i]=(this->reg[34]+bitset<32>(4))[28+i];
+    for(int i = 0 ; i < 4 ;i++)temp[28+i]=(pre_PC+bitset<32>(4))[28+i];
     this->reg[34] = temp | C4;
     PCisadjusted = true;
 }
@@ -619,3 +640,4 @@ void Reg::WB_WriteReg(bitset<32>input, int des){
     }
     else this->reg[des] = input;
 }
+

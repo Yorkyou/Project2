@@ -86,7 +86,8 @@ void Instruction::StartInstrctuion(Reg *r,Memory *m,stage *s){
     for (command=bitset<32>(m->InstToMem[int(r->reg[34].to_ulong())])
          ;!command.none()|| r->reg[34].to_ulong() < 1024
          ;command=bitset<32>(m->InstToMem[int(r->reg[34].to_ulong())]),cycle++) {
-        RecordRegAndUpdate(r, cycle);
+        
+        rdRegAndUpdate(r, cycle);
         stageOutput[4] =s->WB(r, cycle);
         stageOutput[3] =s->DM(r, m, cycle);
         stageOutput[2] =s->EX(r, cycle);
@@ -96,10 +97,12 @@ void Instruction::StartInstrctuion(Reg *r,Memory *m,stage *s){
         RecordError(r);
         s->stageUpdate(s->stall);
         if (r->halt)break;
-        if (!r->PCisadjusted && !s->stall) {
+        if (!r->PCisadjusted && !s->stall && !s->flush) {
+            r->pre_PC = r->reg[34];
             r->PCmoveForward();
         }
         else r->PCisadjusted = false;
+        
         //halt ~~~
     }
 }

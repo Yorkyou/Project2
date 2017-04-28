@@ -348,7 +348,6 @@ string stage::ID(Reg *r,int cycle){
                 if (EX_DM_available[rs[1]]) {
                     fwd_EX_DM_rs = true;
                     input_rs = ex_dm[rs[1]];
-                    
                 }
                 else input_rs = r->reg[rs[1]];
                 if (EX_DM_available[rt[1]]){
@@ -421,7 +420,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
             EX_DM_available[i] = true;//set it to false done at DM stage.
             EX_DM_TOBEavailable[i] = false;
         }
-        if (TOBE_done_EX[i]) {
+        if (TOBE_done_EX[i]) {////////////
             done[i] = true;
             TOBE_done_EX[i] = false;
         }
@@ -640,35 +639,35 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
         case 0x23://lw
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LW";
-            done[rt[2]] = false;
+            if(rt[2]!=0)done[rt[2]] = false;
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
         case 0x21://lh
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LH";
-            done[rt[2]] = false;
+            if(rt[2]!=0)done[rt[2]] = false;
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
         case 0x25://lhu
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LHU";
-            done[rt[2]] = false;
+            if(rt[2]!=0)done[rt[2]] = false;
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
         case 0x20://lb
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LB";
-            done[rt[2]] = false;
+            if(rt[2]!=0)done[rt[2]] = false;
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
         case 0x24://lbu
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LBU";
-            done[rt[2]] = false;
+            if(rt[2]!=0)done[rt[2]] = false;
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
@@ -813,7 +812,6 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
 string stage::DM(Reg *r, Memory *m, int cycle){
     string out="";
     for (int i = 0; i < 32; i++) {
-        dm_wb[i] = ex_dm[i];//may cause problems
         if (DM_WB_available[i]) {
             DM_WB_available[i] = false;
         }
@@ -828,6 +826,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             done[i] = true;
             TOBE_done_DM[i] = false;
         }
+        if(EX_DM_TOBEavailable[i])dm_wb[i] = ex_dm[i];//may cause problems
     }
     if (IsNOP(opcode[3], rd[3], rt[3], shamt[3],funct[3])) {
         return "NOP";

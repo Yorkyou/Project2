@@ -20,6 +20,7 @@ class Reg{
 protected:
     bitset<32>reg[35];//registers:HI(32),LO(33),PC(34),SP(29),RA(31)each view as 32bits
     //fault detection
+    bitset<32> pre_PC=0;
     bool write0,overWriteHILO,d_MemAddressOverflow,d_MemMissalign,numberOverflow;
     bool ismult;
     bool PCisadjusted;
