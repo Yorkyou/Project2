@@ -51,7 +51,8 @@ private:
     bool EX_DM_TOBEavailable[32];//If true we need to forwarding/stall
     bool DM_WB_available[32];//If true we need to forwarding/stall
     bool DM_WB_TOBEavailable[32];//If true we need to forwarding/stall
-    bool TOBE_done[32];//If not available -->stall
+    bool TOBE_done_EX[32];//If not available -->stall
+    bool TOBE_done_DM[32];
     bool done[32];//used for fly
     bitset<32> id_ex_31;
     bitset<32> ex_dm[32];//32 temp

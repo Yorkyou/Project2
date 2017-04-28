@@ -28,7 +28,8 @@ stage::stage(){
         DM_WB_available[i] = false;
         DM_WB_TOBEavailable[i] = false;
         done[i] =  true;
-        TOBE_done[i] = false;
+        TOBE_done_EX[i] = false;
+        TOBE_done_DM[i] = false;
     }
     accessAdr = 0;
     id_ex_31 = 0;
@@ -103,73 +104,82 @@ string stage::ID(Reg *r,int cycle){
             switch (funct[1]) {//select input first and know about fwd
                 case 0x20://add
                     out += "ADD";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x21://addu
                     out += "ADDU";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x22://sub
                     out += "SUB";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x24://and
                     out += "AND";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x25://or
                     out += "OR";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x26://xor
                     out += "XOR";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x27://nor
                     out += "NOR";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x28://nand
                     out += "NAND";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x2A://slt
                     out += "SLT";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x00://sll
                     out += "SLL";
-                    if (!TOBE_done[rt[1]]&&!done[rt[1]]) {
+                    if (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x02://srl
                     out += "SRL";
-                    if (!TOBE_done[rt[1]]&&!done[rt[1]]) {
+                    if (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x03://sra
                     out += "SRA";
-                    if (!TOBE_done[rt[1]]&&!done[rt[1]]) {
+                    if (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]]) {
                         stall = true;
                     }
                     break;
@@ -191,13 +201,15 @@ string stage::ID(Reg *r,int cycle){
                     break;
                 case 0x18:
                     out += "MULT";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x19:
                     out += "MULTU";
-                    if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                         stall = true;
                     }
                     break;
@@ -216,61 +228,64 @@ string stage::ID(Reg *r,int cycle){
             //I instructions start from here.
         case 0x08:
             out += "ADDI";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x09:
             out += "ADDIU";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x23://lw
             out += "LW";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x21://lh
             out += "LH";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x25:
             out += "LHU";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x20://lb
             out += "LB";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x24://lbu
             out += "LBU";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x2B://sw
             out += "SW";
-            if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                 stall = true;
             }
             break;
         case 0x29://sh
             out += "SH";
-            if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                 stall = true;
             }
             break;
         case 0x28://sb
             out += "SB";
-            if ((!TOBE_done[rs[1]]&&!done[rs[1]])||(!TOBE_done[rt[1]]&&!done[rt[1]])) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
                 stall = true;
             }
             break;
@@ -279,25 +294,25 @@ string stage::ID(Reg *r,int cycle){
             break;
         case 0x0C://andi
             out += "ANDI";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x0D://ori
             out += "ORI";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x0E://nori
             out += "NORI";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x0A://slti
             out += "SLTI";
-            if (!TOBE_done[rs[1]]&&!done[rs[1]]) {
+            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
                 stall = true;
             }
             break;
@@ -406,9 +421,9 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
             EX_DM_available[i] = true;//set it to false done at DM stage.
             EX_DM_TOBEavailable[i] = false;
         }
-        if (TOBE_done[i]) {
+        if (TOBE_done_EX[i]) {
             done[i] = true;
-            TOBE_done[i] = false;
+            TOBE_done_EX[i] = false;
         }
     }
     if (IsNOP(opcode[2], rd[2], rt[2], shamt[2],funct[2])) return "NOP";
@@ -431,7 +446,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
     }
     else if (DM_WB_available[rt[2]]){
         input_rt = dm_wb[rt[2]];
-        fwd_EX_DM_rt = true;
+        fwd_DM_WB_rt = true;
     }
     else input_rt = r->reg[rt[2]];
     
@@ -443,7 +458,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "ADD";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -452,7 +467,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "ADDU";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -461,7 +476,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "SUB";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -470,7 +485,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "AND";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -479,7 +494,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "OR";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -488,7 +503,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "XOR";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -497,7 +512,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "NOR";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -506,7 +521,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "NAND";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -515,7 +530,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "SLT";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -524,7 +539,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "SLL";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     fwd_EX_DM_rs = false;
@@ -535,7 +550,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "SRL";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     fwd_EX_DM_rs = false;
@@ -546,7 +561,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     out += "SRA";
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     fwd_EX_DM_rs = false;
@@ -576,7 +591,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     fwd_DM_WB_rt = false;
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -589,7 +604,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
                     fwd_DM_WB_rt = false;
                     if(rd[2]!=0){
                         done[rd[2]] = false;
-                        TOBE_done[rd[2]] = true;
+                        TOBE_done_EX[rd[2]] = true;
                         EX_DM_TOBEavailable[rd[2]] = true;
                     }
                     break;
@@ -605,7 +620,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
             out += "ADDI";
             if(rt[2]!=0){
                 done[rt[2]] = false;
-                TOBE_done[rt[2]] = true;
+                TOBE_done_EX[rt[2]] = true;
                 EX_DM_TOBEavailable[rt[2]] = true;
             }
             fwd_EX_DM_rt = false;
@@ -616,7 +631,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
             out += "ADDIU";
             if(rt[2]!=0){
                 done[rt[2]] = false;
-                TOBE_done[rt[2]] = true;
+                TOBE_done_EX[rt[2]] = true;
                 EX_DM_TOBEavailable[rt[2]] = true;
             }
             fwd_EX_DM_rt = false;
@@ -677,7 +692,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
             out += "LUI";
             if(rt[2]!=0){
                 done[rt[2]] = false;
-                TOBE_done[rt[2]] = true;
+                TOBE_done_EX[rt[2]] = true;
                 EX_DM_TOBEavailable[rt[2]] = true;
             }
             fwd_EX_DM_rs = false;
@@ -690,7 +705,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
             out += "ANDI";
             if(rt[2]!=0){
                 done[rt[2]] = false;
-                TOBE_done[rt[2]] = true;
+                TOBE_done_EX[rt[2]] = true;
                 EX_DM_TOBEavailable[rt[2]] = true;
             }
             fwd_EX_DM_rt = false;
@@ -701,7 +716,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
             out += "ORI";
             if(rt[2]!=0){
                 done[rt[2]] = false;
-                TOBE_done[rt[2]] = true;
+                TOBE_done_EX[rt[2]] = true;
                 EX_DM_TOBEavailable[rt[2]] = true;
             }
             fwd_EX_DM_rt = false;
@@ -712,7 +727,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
             out += "NORI";
             if(rt[2]!=0){
                 done[rt[2]] = false;
-                TOBE_done[rt[2]] = true;
+                TOBE_done_EX[rt[2]] = true;
                 EX_DM_TOBEavailable[rt[2]] = true;
             }
             fwd_EX_DM_rt = false;
@@ -723,7 +738,7 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
             out += "SLTI";
             if(rt[2]!=0){
                 done[rt[2]] = false;
-                TOBE_done[rt[2]] = true;
+                TOBE_done_EX[rt[2]] = true;
                 EX_DM_TOBEavailable[rt[2]] = true;
             }
             fwd_EX_DM_rt = false;
@@ -809,9 +824,9 @@ string stage::DM(Reg *r, Memory *m, int cycle){
         if (EX_DM_TOBEavailable[i]) {
             DM_WB_TOBEavailable[i] = true;
         }
-        if (TOBE_done[i]){
+        if (TOBE_done_DM[i]){
             done[i] = true;
-            TOBE_done[i] = false;
+            TOBE_done_DM[i] = false;
         }
     }
     if (IsNOP(opcode[3], rd[3], rt[3], shamt[3],funct[3])) {
@@ -888,7 +903,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LW";
             r->DM_lw(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
-                TOBE_done[rt[3]] = true;
+                TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
             }
             break;
@@ -896,7 +911,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LH";
             r->DM_lh(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
-                TOBE_done[rt[3]] = true;
+                TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
             }
             break;
@@ -904,7 +919,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LHU";
             r->DM_lhu(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
-                TOBE_done[rt[3]] = true;
+                TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
             }
             break;
@@ -912,7 +927,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LB";
             r->DM_lb(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
-                TOBE_done[rt[3]] = true;
+                TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
             }
             break;
@@ -920,7 +935,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LBU";
             r->DM_lbu(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
-                TOBE_done[rt[3]] = true;
+                TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
             }
             break;
