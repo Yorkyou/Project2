@@ -73,7 +73,8 @@ string stage::IF(bitset<32>command,Instruction *i,Reg *r){
     for (int i = 0; i < 16; i++) immediate[0][i] = temp1[i];
     for (int i = 0; i < 26; i++) adress[0][i] = temp2[i];
     if (opcode[0]== 0x3F) {
-        if(!stall_already)terminate++;
+        if(flush)terminate = 0;
+        else if(!stall_already)terminate++;
         if (terminate==5) {
             r->halt = true;
         }
@@ -105,81 +106,93 @@ string stage::ID(Reg *r,int cycle){
                 case 0x20://add
                     out += "ADD";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x21://addu
                     out += "ADDU";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x22://sub
                     out += "SUB";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x24://and
                     out += "AND";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x25://or
                     out += "OR";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x26://xor
                     out += "XOR";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x27://nor
                     out += "NOR";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x28://nand
                     out += "NAND";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x2A://slt
                     out += "SLT";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x00://sll
                     out += "SLL";
-                    if (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]]) {
+                    if ((!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x02://srl
                     out += "SRL";
-                    if (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]]) {
+                    if ((!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x03://sra
                     out += "SRA";
-                    if (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]]) {
+                    if ((!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
@@ -202,14 +215,16 @@ string stage::ID(Reg *r,int cycle){
                 case 0x18:
                     out += "MULT";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
                 case 0x19:
                     out += "MULTU";
                     if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                         stall = true;
                     }
                     break;
@@ -228,64 +243,74 @@ string stage::ID(Reg *r,int cycle){
             //I instructions start from here.
         case 0x08:
             out += "ADDI";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x09:
             out += "ADDIU";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x23://lw
             out += "LW";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x21://lh
             out += "LH";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x25:
             out += "LHU";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x20://lb
             out += "LB";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x24://lbu
             out += "LBU";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x2B://sw
             out += "SW";
             if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                 stall = true;
             }
             break;
         case 0x29://sh
             out += "SH";
             if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                 stall = true;
             }
             break;
         case 0x28://sb
             out += "SB";
             if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])) {
+                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
                 stall = true;
             }
             break;
@@ -294,25 +319,29 @@ string stage::ID(Reg *r,int cycle){
             break;
         case 0x0C://andi
             out += "ANDI";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x0D://ori
             out += "ORI";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x0E://nori
             out += "NORI";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
         case 0x0A://slti
             out += "SLTI";
-            if (!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]]) {
+            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
+                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
                 stall = true;
             }
             break;
