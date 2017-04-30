@@ -30,6 +30,7 @@ stage::stage(){
         done[i] =  true;
         TOBE_done_EX[i] = false;
         TOBE_done_DM[i] = false;
+        wasWritten[i] = false;
     }
     accessAdr = 0;
     id_ex_31 = 0;
@@ -105,94 +106,73 @@ string stage::ID(Reg *r,int cycle){
             switch (funct[1]) {//select input first and know about fwd
                 case 0x20://add
                     out += "ADD";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x21://addu
                     out += "ADDU";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x22://sub
                     out += "SUB";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x24://and
                     out += "AND";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x25://or
                     out += "OR";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x26://xor
                     out += "XOR";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x27://nor
                     out += "NOR";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x28://nand
                     out += "NAND";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x2A://slt
                     out += "SLT";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x00://sll
                     out += "SLL";
-                    if ((!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x02://srl
                     out += "SRL";
-                    if ((!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x03://sra
                     out += "SRA";
-                    if ((!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
@@ -214,17 +194,13 @@ string stage::ID(Reg *r,int cycle){
                     break;
                 case 0x18:
                     out += "MULT";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
                 case 0x19:
                     out += "MULTU";
-                    if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                        (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                        (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+                    if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                         stall = true;
                     }
                     break;
@@ -243,74 +219,61 @@ string stage::ID(Reg *r,int cycle){
             //I instructions start from here.
         case 0x08:
             out += "ADDI";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x09:
             out += "ADDIU";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x23://lw
             out += "LW";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x21://lh
             out += "LH";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x25:
             out += "LHU";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x20://lb
             out += "LB";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x24://lbu
             out += "LBU";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x2B://sw
             out += "SW";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+            if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                 stall = true;
             }
             break;
         case 0x29://sh
             out += "SH";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+            if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                 stall = true;
             }
             break;
         case 0x28://sb
             out += "SB";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!TOBE_done_EX[rt[1]]&&!TOBE_done_DM[rt[1]]&&!done[rt[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])||(!done[rt[1]]&&TOBE_done_DM[rt[1]])) {
+            if (wasWritten[rs[1]] || wasWritten[rt[1]]) {
                 stall = true;
             }
             break;
@@ -319,29 +282,25 @@ string stage::ID(Reg *r,int cycle){
             break;
         case 0x0C://andi
             out += "ANDI";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x0D://ori
             out += "ORI";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x0E://nori
             out += "NORI";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
         case 0x0A://slti
             out += "SLTI";
-            if ((!TOBE_done_EX[rs[1]]&&!TOBE_done_DM[rs[1]]&&!done[rs[1]])||
-                (!done[rs[1]]&&TOBE_done_DM[rs[1]])) {
+            if (wasWritten[rs[1]]) {
                 stall = true;
             }
             break;
@@ -668,35 +627,50 @@ string stage::EX(Reg *r,int cycle){//do a Mux to select input from original/forw
         case 0x23://lw
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LW";
-            if(rt[2]!=0)done[rt[2]] = false;
+            if(rt[2]!=0){
+                done[rt[2]] = false;
+                wasWritten[rt[2]] = true;
+            }
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
         case 0x21://lh
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LH";
-            if(rt[2]!=0)done[rt[2]] = false;
+            if(rt[2]!=0){
+                done[rt[2]] = false;
+                wasWritten[rt[2]] = true;
+            }
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
         case 0x25://lhu
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LHU";
-            if(rt[2]!=0)done[rt[2]] = false;
+            if(rt[2]!=0){
+                done[rt[2]] = false;
+                wasWritten[rt[2]] = true;
+            }
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
         case 0x20://lb
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LB";
-            if(rt[2]!=0)done[rt[2]] = false;
+            if(rt[2]!=0){
+                done[rt[2]] = false;
+                wasWritten[rt[2]] = true;
+            }
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
         case 0x24://lbu
             r->EX_CalculateMemIndex(&accessAdr, r->BitsetToSigned16(immediate[2]), input_rs, cycle+1);
             out += "LBU";
-            if(rt[2]!=0)done[rt[2]] = false;
+            if(rt[2]!=0){
+                done[rt[2]] = false;
+                wasWritten[rt[2]] = true;
+            }
             fwd_EX_DM_rt = false;
             fwd_DM_WB_rt = false;
             break;
@@ -933,6 +907,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             if(rt[3]!=0){
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
+                wasWritten[rt[3]] = false;
             }
             break;
         case 0x21://lh
@@ -941,6 +916,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             if(rt[3]!=0){
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
+                wasWritten[rt[3]] = false;
             }
             break;
         case 0x25:
@@ -949,6 +925,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             if(rt[3]!=0){
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
+                wasWritten[rt[3]] = false;
             }
             break;
         case 0x20://lb
@@ -957,6 +934,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             if(rt[3]!=0){
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
+                wasWritten[rt[3]] = false;
             }
             break;
         case 0x24://lbu
@@ -965,6 +943,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             if(rt[3]!=0){
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
+                wasWritten[rt[3]] = false;
             }
             break;
         case 0x2B://sw

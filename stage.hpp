@@ -53,6 +53,7 @@ private:
     bool TOBE_done_EX[32];//If not available -->stall
     bool TOBE_done_DM[32];
     bool done[32];//used for fly
+    bool wasWritten[32];
     bitset<32> id_ex_31;
     bitset<32> ex_dm[32];//32 temp
     bitset<32> dm_wb[32];//32 temp
