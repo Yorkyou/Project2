@@ -67,9 +67,9 @@ void Instruction::RecordStage(){
 }
 void Instruction::RecordError(Reg *r){//also make 5 error detect bool to 0
     if(r->write0) error+="In cycle "+to_string(cycle+1)+": Write $0 Error\n";
-    if(r->overWriteHILO) error+="In cycle "+to_string(cycle+1)+": Overwrite HI-LO registers\n";
     if(r->d_MemAddressOverflow)error+="In cycle "+to_string(cycle+1)+": Address Overflow\n";
     if(r->d_MemMissalign)error+="In cycle "+to_string(cycle+1)+": Misalignment Error\n";
+    if(r->overWriteHILO) error+="In cycle "+to_string(cycle+1)+": Overwrite HI-LO registers\n";
     if(r->numberOverflow)error+="In cycle "+to_string(cycle+1)+": Number Overflow\n";
     r->write0 = false;
     r->overWriteHILO = false;
