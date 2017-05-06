@@ -905,6 +905,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LW";
             r->DM_lw(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
+                done[rt[3]] = false;
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
                 wasWritten[rt[3]] = false;
@@ -914,6 +915,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LH";
             r->DM_lh(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
+                done[rt[3]] = false;
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
                 wasWritten[rt[3]] = false;
@@ -923,6 +925,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LHU";
             r->DM_lhu(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
+                done[rt[3]] = false;
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
                 wasWritten[rt[3]] = false;
@@ -932,6 +935,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LB";
             r->DM_lb(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
+                done[rt[3]] = false;
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
                 wasWritten[rt[3]] = false;
@@ -941,6 +945,7 @@ string stage::DM(Reg *r, Memory *m, int cycle){
             out += "LBU";
             r->DM_lbu(accessAdr, &dm_wb[rt[3]], m);
             if(rt[3]!=0){
+                done[rt[3]] = false;
                 TOBE_done_DM[rt[3]] = true;
                 DM_WB_TOBEavailable[rt[3]] = true;
                 wasWritten[rt[3]] = false;

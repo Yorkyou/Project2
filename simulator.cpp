@@ -58,7 +58,7 @@ int main(int argc, const char * argv[]) {//open data
     in.StartInstrctuion(&r,&m,&s);
     error << in.getError();
     snapshot << in.getOut();
-    //cout << "\n\nOut:\n" << in.getOut() << "\n\nError:\n" << in.getError();
+    cout << "\n\nOut:\n" << in.getOut() << "\n\nError:\n" << in.getError();
     return 0;
 }
 string HextoBinary(char ch){
